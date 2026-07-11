@@ -7,9 +7,9 @@ import { hojeISO, type Refeicao } from "@/lib/types";
 type ResultadoPresenca = { ok: boolean; mensagem: string };
 
 /**
- * Registra presença de um acolhido. Por padrão, na data de hoje.
- * O índice único (acolhido_id, data) impede duplicar no mesmo dia — nesse
- * caso devolvemos uma mensagem amigável em vez de erro.
+ * Registra (ou atualiza) a presença de um acolhido. Por padrão, na data de hoje.
+ * Faz upsert por (acolhido_id, data): mantém uma presença por dia, mas permite
+ * corrigir/trocar a refeição e a observação reenviando o formulário no mesmo dia.
  */
 export async function registrarPresenca(
   acolhidoId: string,
@@ -18,18 +18,17 @@ export async function registrarPresenca(
   const supabase = createClient();
   const data = opts?.data ?? hojeISO();
 
-  const { error } = await supabase.from("presencas").insert({
-    acolhido_id: acolhidoId,
-    data,
-    refeicao: opts?.refeicao ?? null,
-    observacao: opts?.observacao ?? null,
-  });
+  const { error } = await supabase.from("presencas").upsert(
+    {
+      acolhido_id: acolhidoId,
+      data,
+      refeicao: opts?.refeicao ?? null,
+      observacao: opts?.observacao ?? null,
+    },
+    { onConflict: "acolhido_id,data" },
+  );
 
   if (error) {
-    // 23505 = violação de índice único (já tem presença nesse dia)
-    if (error.code === "23505") {
-      return { ok: true, mensagem: "Presença já registrada hoje." };
-    }
     return { ok: false, mensagem: error.message };
   }
 
