@@ -2,7 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { hojeISO, labelRefeicao, labelTipo, simNao } from "@/lib/types";
 
 function csvEscape(v: unknown): string {
-  const s = v == null ? "" : String(v);
+  let s = v == null ? "" : String(v);
+  // Blindagem contra CSV formula injection: células que começam com =, +, -, @
+  // (ou tab/CR) podem ser executadas como fórmula pelo Excel/Sheets ao abrir o
+  // arquivo. Prefixamos com apóstrofo para forçar interpretação como texto.
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   if (/[";\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }

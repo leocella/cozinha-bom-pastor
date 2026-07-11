@@ -16,6 +16,7 @@ import {
 import Avatar from "@/components/Avatar";
 import BotaoPresenca from "@/components/BotaoPresenca";
 import BotaoStatus from "@/components/BotaoStatus";
+import BotaoExcluir from "@/components/BotaoExcluir";
 import FormPresenca from "@/components/FormPresenca";
 import { registrarPresencaForm } from "@/lib/actions/presencas";
 
@@ -207,6 +208,7 @@ export default async function DetalheAcolhidoPage({
             <Pencil size={18} /> Editar cadastro
           </Link>
           <BotaoStatus id={acolhido.id} status={acolhido.status} />
+          <BotaoExcluir id={acolhido.id} nome={acolhido.nome} />
         </div>
       </div>
 

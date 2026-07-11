@@ -110,6 +110,17 @@ export async function atualizarAcolhido(id: string, formData: FormData) {
   redirect(`/acolhidos/${id}`);
 }
 
+export async function excluirAcolhido(id: string) {
+  const supabase = createClient();
+  // As presenças são removidas em cascata (FK on delete cascade).
+  const { error } = await supabase.from("acolhidos").delete().eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/inicio");
+  redirect("/inicio");
+}
+
 export async function definirStatus(
   id: string,
   status: "ativo" | "inativo",
