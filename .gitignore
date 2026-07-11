@@ -1,0 +1,16 @@
+/node_modules
+/.next
+/out
+/build
+.env
+.env.local
+.env.vercel
+key.txt
+url.txt
+.DS_Store
+*.pem
+npm-debug.log*
+.vercel
+next-env.d.ts
+
+.vercel
