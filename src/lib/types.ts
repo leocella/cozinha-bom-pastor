@@ -69,6 +69,8 @@ export type Acolhido = {
   beneficio: string | null;
   responsavel_legal: string | null;
   motivos: string[] | null;
+  rua: string | null;
+  numero: string | null;
 };
 
 export type AcolhidoResumo = Acolhido & {

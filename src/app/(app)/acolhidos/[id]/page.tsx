@@ -123,6 +123,8 @@ export default async function DetalheAcolhidoPage({
             rotulo="Contato de referência"
             valor={acolhido.contato_referencia}
           />
+          <Campo rotulo="Rua" valor={acolhido.rua} />
+          <Campo rotulo="Número" valor={acolhido.numero} />
           <Campo rotulo="Passagem policial / artigo" valor={acolhido.artigo} />
           <Campo
             rotulo="Boletim de ocorrência"

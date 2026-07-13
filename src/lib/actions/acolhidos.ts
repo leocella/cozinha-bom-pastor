@@ -67,6 +67,9 @@ function montarPayload(formData: FormData) {
     beneficio: str(formData.get("beneficio")),
     responsavel_legal: str(formData.get("responsavel_legal")),
     motivos: arr(formData.getAll("motivos")),
+    // endereço
+    rua: str(formData.get("rua")),
+    numero: str(formData.get("numero")),
   };
 }
 

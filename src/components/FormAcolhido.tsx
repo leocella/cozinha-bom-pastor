@@ -186,6 +186,33 @@ export default function FormAcolhido({
           />
         </div>
 
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2">
+            <label className="label" htmlFor="rua">
+              Rua
+            </label>
+            <input
+              id="rua"
+              name="rua"
+              className="field"
+              placeholder="Nome da rua"
+              defaultValue={acolhido?.rua ?? ""}
+            />
+          </div>
+          <div>
+            <label className="label" htmlFor="numero">
+              Número
+            </label>
+            <input
+              id="numero"
+              name="numero"
+              className="field"
+              placeholder="Nº"
+              defaultValue={acolhido?.numero ?? ""}
+            />
+          </div>
+        </div>
+
         <div>
           <label className="label" htmlFor="artigo">
             Passagem policial / artigo
