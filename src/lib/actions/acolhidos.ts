@@ -39,7 +39,31 @@ function tipoDe(v: FormDataEntryValue | null): "rua" | "familia" {
   return v?.toString() === "familia" ? "familia" : "rua";
 }
 
+function parseFilhosDetalhes(v: FormDataEntryValue | null): { nome: string; idade: number | null }[] {
+  const s = (v ?? "").toString().trim();
+  if (!s) return [];
+  try {
+    const list = JSON.parse(s);
+    if (Array.isArray(list)) {
+      return list
+        .map((f: { nome?: unknown; idade?: unknown }) => {
+          const nome = String(f.nome ?? "").trim();
+          const i = num(f.idade as FormDataEntryValue);
+          return { nome, idade: i };
+        })
+        .filter((f) => f.nome.length > 0);
+    }
+  } catch {
+    // ignorar JSON malformado
+  }
+  return [];
+}
+
 function montarPayload(formData: FormData) {
+  const filhosDetalhes = parseFilhosDetalhes(formData.get("filhos_detalhes_json"));
+  const qtdFilhosLegacy = num(formData.get("filhos"));
+  const qtdFilhos = filhosDetalhes.length > 0 ? filhosDetalhes.length : qtdFilhosLegacy;
+
   return {
     nome: (str(formData.get("nome")) ?? "").toString(),
     tipo: tipoDe(formData.get("tipo")),
@@ -57,14 +81,18 @@ function montarPayload(formData: FormData) {
     tem_bo: bool(formData.get("tem_bo")),
     autoriza_imagem: bool(formData.get("autoriza_imagem")),
     data_cadastro: str(formData.get("data_cadastro")),
+    // filhos / pensão / renda / benefício
+    filhos: qtdFilhos,
+    filhos_detalhes: filhosDetalhes,
+    paga_pensao: bool(formData.get("paga_pensao")),
+    renda_familiar: numDec(formData.get("renda_familiar")),
+    beneficio: str(formData.get("beneficio")),
     // família
     bairro: str(formData.get("bairro")),
     cidade: str(formData.get("cidade")),
     paga_aluguel: bool(formData.get("paga_aluguel")),
     valor_aluguel: numDec(formData.get("valor_aluguel")),
     casa_propria: bool(formData.get("casa_propria")),
-    filhos: num(formData.get("filhos")),
-    beneficio: str(formData.get("beneficio")),
     responsavel_legal: str(formData.get("responsavel_legal")),
     motivos: arr(formData.getAll("motivos")),
     // endereço

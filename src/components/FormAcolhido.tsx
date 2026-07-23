@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LoaderCircle, Save } from "lucide-react";
+import { LoaderCircle, Save, Plus, Trash2 } from "lucide-react";
 import FotoUpload from "@/components/FotoUpload";
-import { TIPOS, MOTIVOS, hojeISO, type Acolhido, type Tipo } from "@/lib/types";
+import { TIPOS, MOTIVOS, hojeISO, type Acolhido, type Tipo, type Filho } from "@/lib/types";
 
 function SimNao({
   name,
@@ -48,8 +48,43 @@ export default function FormAcolhido({
   const [pagaAluguel, setPagaAluguel] = useState<string>(
     acolhido?.paga_aluguel == null ? "" : acolhido.paga_aluguel ? "sim" : "nao",
   );
+  const [filhos, setFilhos] = useState<Filho[]>(() => {
+    if (acolhido?.filhos_detalhes && acolhido.filhos_detalhes.length > 0) {
+      return acolhido.filhos_detalhes;
+    }
+    if (acolhido?.filhos && acolhido.filhos > 0) {
+      return Array.from({ length: acolhido.filhos }, () => ({
+        nome: "",
+        idade: null,
+      }));
+    }
+    return [];
+  });
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+
+  function adicionarFilho() {
+    setFilhos((prev) => [...prev, { nome: "", idade: null }]);
+  }
+
+  function removerFilho(index: number) {
+    setFilhos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function atualizarFilho(
+    index: number,
+    campo: "nome" | "idade",
+    valor: string,
+  ) {
+    setFilhos((prev) =>
+      prev.map((f, i) => {
+        if (i !== index) return f;
+        if (campo === "nome") return { ...f, nome: valor };
+        const idadeNum = valor.trim() !== "" ? parseInt(valor, 10) : null;
+        return { ...f, idade: Number.isFinite(idadeNum) ? idadeNum : null };
+      }),
+    );
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -260,6 +295,7 @@ export default function FormAcolhido({
               />
             </div>
           </div>
+
           <div>
             <label className="label" htmlFor="restricoes_alimentares">
               Restrições alimentares
@@ -271,6 +307,82 @@ export default function FormAcolhido({
               defaultValue={acolhido?.restricoes_alimentares ?? ""}
             />
           </div>
+
+          <div>
+            <label className="label" htmlFor="beneficio">
+              Benefício
+            </label>
+            <input
+              id="beneficio"
+              name="beneficio"
+              className="field"
+              placeholder="Bolsa Família, BPC, etc."
+              defaultValue={acolhido?.beneficio ?? ""}
+            />
+          </div>
+
+          {/* Filhos e Pensão alimentícia */}
+          <div className="space-y-3 rounded-xl border border-line p-4">
+            <div className="flex items-center justify-between">
+              <label className="label mb-0">Filhos (Nome e Idade)</label>
+              <button
+                type="button"
+                onClick={adicionarFilho}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+              >
+                <Plus size={14} /> Adicionar filho
+              </button>
+            </div>
+            <input
+              type="hidden"
+              name="filhos_detalhes_json"
+              value={JSON.stringify(filhos)}
+            />
+            {filhos.length === 0 ? (
+              <p className="text-xs text-muted">Nenhum filho informado.</p>
+            ) : (
+              <div className="space-y-2">
+                {filhos.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nome do filho"
+                      className="field flex-1"
+                      value={f.nome}
+                      onChange={(e) =>
+                        atualizarFilho(i, "nome", e.target.value)
+                      }
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={120}
+                      placeholder="Idade"
+                      className="field w-24"
+                      value={f.idade ?? ""}
+                      onChange={(e) =>
+                        atualizarFilho(i, "idade", e.target.value)
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removerFilho(i)}
+                      className="p-2 text-muted hover:text-danger"
+                      title="Remover filho"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <SimNao
+            name="paga_pensao"
+            label="Paga pensão alimentícia (filho menor)"
+            defaultValue={acolhido?.paga_pensao}
+          />
         </div>
       )}
 
@@ -374,20 +486,78 @@ export default function FormAcolhido({
             </div>
           )}
 
+          {/* Filhos (Nome e Idade) */}
+          <div className="space-y-3 rounded-xl border border-line p-4">
+            <div className="flex items-center justify-between">
+              <label className="label mb-0">Filhos (Nome e Idade)</label>
+              <button
+                type="button"
+                onClick={adicionarFilho}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+              >
+                <Plus size={14} /> Adicionar filho
+              </button>
+            </div>
+            <input
+              type="hidden"
+              name="filhos_detalhes_json"
+              value={JSON.stringify(filhos)}
+            />
+            {filhos.length === 0 ? (
+              <p className="text-xs text-muted">Nenhum filho informado.</p>
+            ) : (
+              <div className="space-y-2">
+                {filhos.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nome do filho"
+                      className="field flex-1"
+                      value={f.nome}
+                      onChange={(e) =>
+                        atualizarFilho(i, "nome", e.target.value)
+                      }
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={120}
+                      placeholder="Idade"
+                      className="field w-24"
+                      value={f.idade ?? ""}
+                      onChange={(e) =>
+                        atualizarFilho(i, "idade", e.target.value)
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removerFilho(i)}
+                      className="p-2 text-muted hover:text-danger"
+                      title="Remover filho"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="label" htmlFor="filhos">
-                Quantidade de filhos
+              <label className="label" htmlFor="renda_familiar">
+                Renda familiar (R$)
               </label>
               <input
-                id="filhos"
-                name="filhos"
+                id="renda_familiar"
+                name="renda_familiar"
                 type="number"
                 min={0}
-                max={30}
-                inputMode="numeric"
+                step="0.01"
+                inputMode="decimal"
                 className="field"
-                defaultValue={acolhido?.filhos ?? ""}
+                placeholder="Ex: 1500,00"
+                defaultValue={acolhido?.renda_familiar ?? ""}
               />
             </div>
             <div>

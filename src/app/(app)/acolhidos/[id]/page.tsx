@@ -61,10 +61,18 @@ export default async function DetalheAcolhidoPage({
   const veioHoje = (hojeData ?? []).length > 0;
   const fotoUrl = await assinarFoto(acolhido.foto_path);
 
-  const idade =
-    acolhido.idade_aproximada != null
-      ? `~${acolhido.idade_aproximada} anos`
-      : null;
+  const textoFilhos =
+    acolhido.filhos_detalhes && acolhido.filhos_detalhes.length > 0
+      ? acolhido.filhos_detalhes
+          .map((f) =>
+            f.idade != null
+              ? `${f.nome} (${f.idade} ${f.idade === 1 ? "ano" : "anos"})`
+              : f.nome,
+          )
+          .join(", ")
+      : acolhido.filhos != null
+        ? `${acolhido.filhos} ${acolhido.filhos === 1 ? "filho" : "filhos"}`
+        : null;
 
   async function registrar(formData: FormData) {
     "use server";
@@ -143,11 +151,24 @@ export default async function DetalheAcolhidoPage({
 
           {acolhido.tipo === "rua" && (
             <>
-              <Campo rotulo="Idade aproximada" valor={idade} />
+              <Campo
+                rotulo="Idade aproximada"
+                valor={
+                  acolhido.idade_aproximada != null
+                    ? `~${acolhido.idade_aproximada} anos`
+                    : null
+                }
+              />
               <Campo rotulo="Cidade de origem" valor={acolhido.cidade_origem} />
               <Campo
                 rotulo="Restrições alimentares"
                 valor={acolhido.restricoes_alimentares}
+              />
+              <Campo rotulo="Benefício" valor={acolhido.beneficio} />
+              <Campo rotulo="Filhos" valor={textoFilhos} />
+              <Campo
+                rotulo="Paga pensão alimentícia"
+                valor={simNao(acolhido.paga_pensao)}
               />
             </>
           )}
@@ -170,9 +191,10 @@ export default async function DetalheAcolhidoPage({
                 rotulo="Valor do aluguel"
                 valor={formatarBRL(acolhido.valor_aluguel)}
               />
+              <Campo rotulo="Filhos" valor={textoFilhos} />
               <Campo
-                rotulo="Quantidade de filhos"
-                valor={acolhido.filhos != null ? String(acolhido.filhos) : null}
+                rotulo="Renda familiar"
+                valor={formatarBRL(acolhido.renda_familiar)}
               />
               <Campo rotulo="Benefício" valor={acolhido.beneficio} />
               <Campo

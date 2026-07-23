@@ -39,6 +39,11 @@ export function formatarBRL(v: number | null): string | null {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+export type Filho = {
+  nome: string;
+  idade: number | null;
+};
+
 export type Acolhido = {
   id: string;
   nome: string;
@@ -66,6 +71,9 @@ export type Acolhido = {
   valor_aluguel: number | null;
   casa_propria: boolean | null;
   filhos: number | null;
+  filhos_detalhes: Filho[] | null;
+  paga_pensao: boolean | null;
+  renda_familiar: number | null;
   beneficio: string | null;
   responsavel_legal: string | null;
   motivos: string[] | null;

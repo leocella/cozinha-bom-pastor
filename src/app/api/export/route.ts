@@ -41,32 +41,47 @@ export async function GET(request: Request) {
     if (publico) query = query.eq("tipo", publico);
     const { data } = await query;
 
-    const rows = (data ?? []).map((a) => [
-      labelTipo(a.tipo),
-      a.nome,
-      a.como_chamar,
-      a.idade_aproximada,
-      a.data_nascimento,
-      a.documento,
-      a.cidade_origem,
-      a.contato_referencia,
-      a.restricoes_alimentares,
-      a.bairro,
-      a.cidade,
-      simNao(a.casa_propria),
-      simNao(a.paga_aluguel),
-      a.valor_aluguel,
-      a.filhos,
-      a.beneficio,
-      a.artigo,
-      simNao(a.tem_bo),
-      simNao(a.autoriza_imagem),
-      a.responsavel_legal,
-      (a.motivos ?? []).join(", "),
-      a.data_cadastro,
-      a.observacoes,
-      a.status,
-    ]);
+    const rows = (data ?? []).map((a) => {
+      const filhosTexto =
+        Array.isArray(a.filhos_detalhes) && a.filhos_detalhes.length > 0
+          ? a.filhos_detalhes
+              .map((f: { nome?: string; idade?: number | null }) =>
+                f.idade != null ? `${f.nome} (${f.idade}a)` : f.nome,
+              )
+              .join(", ")
+          : a.filhos != null
+            ? String(a.filhos)
+            : "";
+
+      return [
+        labelTipo(a.tipo),
+        a.nome,
+        a.como_chamar,
+        a.idade_aproximada,
+        a.data_nascimento,
+        a.documento,
+        a.cidade_origem,
+        a.contato_referencia,
+        a.restricoes_alimentares,
+        a.bairro,
+        a.cidade,
+        simNao(a.casa_propria),
+        simNao(a.paga_aluguel),
+        a.valor_aluguel,
+        a.renda_familiar,
+        filhosTexto,
+        simNao(a.paga_pensao),
+        a.beneficio,
+        a.artigo,
+        simNao(a.tem_bo),
+        simNao(a.autoriza_imagem),
+        a.responsavel_legal,
+        (a.motivos ?? []).join(", "),
+        a.data_cadastro,
+        a.observacoes,
+        a.status,
+      ];
+    });
     csv = toCsv(
       [
         "Tipo",
@@ -83,7 +98,9 @@ export async function GET(request: Request) {
         "Casa própria",
         "Paga aluguel",
         "Valor do aluguel",
+        "Renda familiar",
         "Filhos",
+        "Paga pensão",
         "Benefício",
         "Artigo",
         "B.O.",
