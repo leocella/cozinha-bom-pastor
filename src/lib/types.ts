@@ -75,6 +75,7 @@ export type Acolhido = {
   paga_pensao: boolean | null;
   renda_familiar: number | null;
   beneficio: string | null;
+  valor_beneficio: number | null;
   responsavel_legal: string | null;
   motivos: string[] | null;
   rua: string | null;

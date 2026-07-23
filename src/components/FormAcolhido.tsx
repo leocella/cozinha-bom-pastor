@@ -308,17 +308,35 @@ export default function FormAcolhido({
             />
           </div>
 
-          <div>
-            <label className="label" htmlFor="beneficio">
-              Benefício
-            </label>
-            <input
-              id="beneficio"
-              name="beneficio"
-              className="field"
-              placeholder="Bolsa Família, BPC, etc."
-              defaultValue={acolhido?.beneficio ?? ""}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="label" htmlFor="beneficio">
+                Benefício
+              </label>
+              <input
+                id="beneficio"
+                name="beneficio"
+                className="field"
+                placeholder="Bolsa Família, BPC, etc."
+                defaultValue={acolhido?.beneficio ?? ""}
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="valor_beneficio">
+                Valor do benefício (R$)
+              </label>
+              <input
+                id="valor_beneficio"
+                name="valor_beneficio"
+                type="number"
+                min={0}
+                step="0.01"
+                inputMode="decimal"
+                className="field"
+                placeholder="Ex: 600,00"
+                defaultValue={acolhido?.valor_beneficio ?? ""}
+              />
+            </div>
           </div>
 
           {/* Filhos e Pensão alimentícia */}
@@ -543,7 +561,7 @@ export default function FormAcolhido({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className="label" htmlFor="renda_familiar">
                 Renda familiar (R$)
@@ -570,6 +588,22 @@ export default function FormAcolhido({
                 className="field"
                 placeholder="Bolsa Família, BPC..."
                 defaultValue={acolhido?.beneficio ?? ""}
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="valor_beneficio">
+                Valor do benefício (R$)
+              </label>
+              <input
+                id="valor_beneficio"
+                name="valor_beneficio"
+                type="number"
+                min={0}
+                step="0.01"
+                inputMode="decimal"
+                className="field"
+                placeholder="Ex: 600,00"
+                defaultValue={acolhido?.valor_beneficio ?? ""}
               />
             </div>
           </div>

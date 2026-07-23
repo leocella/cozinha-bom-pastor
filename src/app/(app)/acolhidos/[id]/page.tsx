@@ -165,6 +165,10 @@ export default async function DetalheAcolhidoPage({
                 valor={acolhido.restricoes_alimentares}
               />
               <Campo rotulo="Benefício" valor={acolhido.beneficio} />
+              <Campo
+                rotulo="Valor do benefício"
+                valor={formatarBRL(acolhido.valor_beneficio)}
+              />
               <Campo rotulo="Filhos" valor={textoFilhos} />
               <Campo
                 rotulo="Paga pensão alimentícia"
@@ -197,6 +201,10 @@ export default async function DetalheAcolhidoPage({
                 valor={formatarBRL(acolhido.renda_familiar)}
               />
               <Campo rotulo="Benefício" valor={acolhido.beneficio} />
+              <Campo
+                rotulo="Valor do benefício"
+                valor={formatarBRL(acolhido.valor_beneficio)}
+              />
               <Campo
                 rotulo="Responsável legal"
                 valor={acolhido.responsavel_legal}

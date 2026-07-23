@@ -9,6 +9,7 @@
 alter table public.acolhidos add column if not exists filhos_detalhes jsonb default '[]'::jsonb;
 alter table public.acolhidos add column if not exists paga_pensao boolean;
 alter table public.acolhidos add column if not exists renda_familiar numeric(10,2);
+alter table public.acolhidos add column if not exists valor_beneficio numeric(10,2);
 
 -- Recria a view vw_acolhidos para incluir as novas colunas
 drop view if exists public.vw_acolhidos;

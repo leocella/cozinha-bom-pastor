@@ -87,6 +87,7 @@ function montarPayload(formData: FormData) {
     paga_pensao: bool(formData.get("paga_pensao")),
     renda_familiar: numDec(formData.get("renda_familiar")),
     beneficio: str(formData.get("beneficio")),
+    valor_beneficio: numDec(formData.get("valor_beneficio")),
     // família
     bairro: str(formData.get("bairro")),
     cidade: str(formData.get("cidade")),
